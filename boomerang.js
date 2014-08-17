@@ -260,6 +260,9 @@ impl = {
 		}
 
 		return true;
+	},
+	on_bw_rough_done: function(network_status){//TODO
+		
 	}
 };
 
@@ -537,10 +540,10 @@ boomr = {
 
 	init: function(config) {
 		var i, k,
-		    properties = ["beacon_url", "beacon_type", "site_domain", "user_ip", "strip_query_string"];
+		    properties = ["beacon_url", "beacon_type", "site_domain", "user_ip", "strip_query_string", "on_bw_rough_done"];//TODO
 
 		BOOMR_check_doc_domain();
-
+		
 		if(!config) {
 			config = {};
 		}
@@ -550,7 +553,7 @@ boomr = {
 				impl[properties[i]] = config[properties[i]];
 			}
 		}
-
+		
 		if(config.log !== undefined) {
 			this.log = config.log;
 		}
@@ -681,6 +684,7 @@ boomr = {
 	},
 
 	subscribe: function(e_name, fn, cb_data, cb_scope) {
+		
 		var i, handler, ev, unload_handler;
 
 		e_name = e_name.toLowerCase();

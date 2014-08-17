@@ -94,6 +94,70 @@ impl = {
 		return b;
 	},
 
+	calc_rough_latency: function()//TODO
+	{
+		var	i, n, sum=0, amean, lat_filteredt;
+		
+		// We first do IQR filtering and use the resulting data set
+		// for all calculations
+		lat_filtered = this.iqr(this.latencies.sort(this.ncmp));
+		n = lat_filtered.length;
+		
+		// First we get the arithmetic mean, standard deviation and standard error
+		for(i=0; i<n; i++) {
+			sum += lat_filtered[i];
+		}
+		
+		amean = Math.round(sum / n);
+		return amean;
+	},
+	
+	calc_rough_bw: function()//TODO
+	{
+		var	i, j, n=0, r, bandwidths_corrected=[], median_corrected;
+		
+		for(i=0; i<this.nruns; i++) {
+			
+			if(!this.results[i] || !this.results[i].r) {
+				continue;
+			}
+			
+			r=this.results[i].r;
+
+			// the next loop we iterate through backwards and only consider the largest
+			// 3 images that succeeded that way we don't consider small images that
+			// downloaded fast without really saturating the network
+			nimgs=0;
+			for(j=r.length-1; j>=0 && nimgs<3; j--) {
+				
+				
+				// if we hit an undefined image time, we skipped everything before this
+				if(!r[j]) {
+					break;
+				}
+				if(r[j].t === null) {
+					continue;
+				}
+
+				n++;
+				nimgs++;
+
+				// multiply by 1000 since t is in milliseconds and not seconds
+				bw_c = images[j].size*1000/(r[j].t - this.latency.mean);
+				bandwidths_corrected.push(bw_c);
+			}
+		}
+		
+		median_corrected = Math.round(
+				(
+					bandwidths_corrected[Math.floor(n/2)]
+					+ bandwidths_corrected[Math.ceil(n/2)]
+				) / 2
+			);
+		
+		return median_corrected;
+	},
+	
 	calc_latency: function()
 	{
 		var	i, n,
@@ -111,7 +175,7 @@ impl = {
 		// for all calculations
 		lat_filtered = this.iqr(this.latencies.sort(this.ncmp));
 		n = lat_filtered.length;
-
+		
 		BOOMR.debug("latencies: " + this.latencies, "bw");
 		BOOMR.debug("lat_filtered: " + lat_filtered, "bw");
 
@@ -120,7 +184,7 @@ impl = {
 			sum += lat_filtered[i];
 			sumsq += lat_filtered[i] * lat_filtered[i];
 		}
-
+		
 		amean = Math.round(sum / n);
 
 		std_dev = Math.sqrt( sumsq/n - sum*sum/(n*n));
@@ -146,7 +210,7 @@ impl = {
 			amean, std_dev, std_err, median,
 			amean_corrected, std_dev_corrected, std_err_corrected, median_corrected,
 			nimgs, bw, bw_c, debug_info=[];
-
+		
 		for(i=0; i<this.nruns; i++) {
 			if(!this.results[i] || !this.results[i].r) {
 				continue;
@@ -182,7 +246,7 @@ impl = {
 				}
 			}
 		}
-
+		
 		BOOMR.debug('got ' + n + ' readings', "bw");
 
 		BOOMR.debug('bandwidths: ' + bandwidths, "bw");
@@ -243,7 +307,7 @@ impl = {
 		BOOMR.debug('amean: ' + amean + ', median: ' + median, "bw");
 		BOOMR.debug('corrected amean: ' + amean_corrected + ', '
 				+ 'median: ' + median_corrected, "bw");
-
+		
 		return {
 			mean: amean,
 			stddev: std_dev,
@@ -265,6 +329,7 @@ impl = {
 
 	load_img: function(i, run, callback)
 	{
+		
 		var url = this.base_url + images[i].name
 			+ '?t=' + (new Date().getTime()) + Math.random(),	// Math.random() is slow, but we get it before we start the timer
 		    timer=0, tstart=0,
@@ -371,20 +436,50 @@ impl = {
 		}
 	},
 
+	halfTime: function(){
+		if (typeof impl.on_bw_rough_done !== "undefined") {//TODO
+
+			var network_status = {};
+			network_status.bandwidth = parseInt(this.calc_rough_bw()*8/1024);
+			network_status.latency = this.calc_rough_latency();  
+			impl.on_bw_rough_done(network_status);
+			
+			console.log("==================================================================");
+			console.log("1st Star: "+ BOOMR.t_start);
+			console.log("1nd naviStar: "+ performance.timing.navigationStart)
+			var now1 = new Date().getTime();
+			console.log("1st End: "+ now1);
+			var page_load_time1 = now1 - BOOMR.t_start;
+			var page_load_time11 = now1 - performance.timing.navigationStart;
+			console.log("1st loading time: " + page_load_time1 +", "+page_load_time11);
+			console.log("==================================================================");
+		}
+	},
+	
 	finish: function()
-	{
+	{	
 		if(!this.latency) {
 			this.latency = this.calc_latency();
 		}
 		var	bw = this.calc_bw(),
 			o = {
-				bw:		bw.median_corrected,
+				bw:			bw.median_corrected,
 				bw_err:		parseFloat(bw.stderr_corrected, 10),
 				lat:		this.latency.mean,
 				lat_err:	parseFloat(this.latency.stderr, 10),
 				bw_time:	Math.round(new Date().getTime()/1000)
 			};
 
+		console.log("==================================================================");
+		console.log("2nd Star: "+ BOOMR.t_start);
+		console.log("2nd naviStar: "+ performance.timing.navigationStart)
+		var now2 = new Date().getTime();
+		console.log("2nd End: "+ now2);
+		var page_load_time2 = now2 - BOOMR.t_start;
+		var page_load_time22 = now2 - performance.timing.navigationStart;
+		console.log("2nd loading time: " + page_load_time2 +", "+page_load_time22);
+		console.log("==================================================================");
+		
 		BOOMR.addVar(o);
 		if(bw.debug_info.length > 0) {
 			BOOMR.addVar("bw_debug", bw.debug_info.join(','));
@@ -420,10 +515,20 @@ impl = {
 		if(!this.runs_left) {
 			this.finish();
 		}
-		else if(this.latency_runs) {
+		else if(this.latency_runs) {//TODO
 			this.load_img('l', this.latency_runs--, this.lat_loaded);
+			
 		}
 		else {
+			if(this.results.length == 1){
+				//console.log("::::::::::::::::::::::::::::::::::::::::::::::::::::");
+				this.results.push({r:[]});
+				var half_runs_left = this.runs_left--;
+				this.load_img(images.start, half_runs_left, this.img_loaded);
+				//console.log(this.results);
+				this.halfTime();
+			}
+			
 			this.results.push({r:[]});
 			this.load_img(images.start, this.runs_left--, this.img_loaded);
 		}
@@ -481,7 +586,12 @@ BOOMR.plugins.BW = {
 		if(!impl.base_url) {
 			return this;
 		}
-
+		
+		//TODO
+		if(config && config.on_bw_rough_done) {
+			impl.on_bw_rough_done = config.on_bw_rough_done;
+		}
+		
 		images.start = 0;
 		impl.runs_left = impl.nruns;
 		impl.latency_runs = 10;
