@@ -524,7 +524,7 @@ impl = {
 		else {
 			if (typeof impl.on_bw_rough_done !== "undefined") {//TODO
 				if(this.results.length == impl.rough){
-					alert(impl.rough);
+					//alert(impl.rough);
 					//console.log("::::::::::::::::::::::::::::::::::::::::::::::::::::");
 					this.results.push({r:[]});
 					var half_runs_left = this.runs_left--;
