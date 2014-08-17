@@ -45,8 +45,9 @@ else if (document.attachEvent) {
 
 BOOMR.init({ 
 	user_ip: '10.0.0.1', 
-	BW: { base_url: '../images/', cookie: 'BBA' }
-	,on_bw_rough_done: function(network_status){
+	BW: { base_url: '../images/', cookie: 'BBA' },
+	rough: 1,
+	on_bw_rough_done: function(network_status){
 		alert("Rough bw: "+network_status.bandwidth+", Rough lat: "+network_status.latency);
 	} 
 });

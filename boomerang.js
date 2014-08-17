@@ -261,6 +261,9 @@ impl = {
 
 		return true;
 	},
+	
+	rough: 2,
+	
 	on_bw_rough_done: function(network_status){//TODO
 		
 	}
@@ -540,7 +543,7 @@ boomr = {
 
 	init: function(config) {
 		var i, k,
-		    properties = ["beacon_url", "beacon_type", "site_domain", "user_ip", "strip_query_string", "on_bw_rough_done"];//TODO
+		    properties = ["beacon_url", "beacon_type", "site_domain", "user_ip", "strip_query_string", "rough", "on_bw_rough_done"];//TODO
 
 		BOOMR_check_doc_domain();
 		

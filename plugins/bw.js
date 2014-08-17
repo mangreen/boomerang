@@ -50,6 +50,8 @@ impl = {
 	test_https: false,
 	cookie_exp: 7*86400,
 	cookie: 'BA',
+	
+	rough: 2,//TODO
 
 	// state
 	results: [],
@@ -520,15 +522,17 @@ impl = {
 			
 		}
 		else {
-			if(this.results.length == 1){
-				//console.log("::::::::::::::::::::::::::::::::::::::::::::::::::::");
-				this.results.push({r:[]});
-				var half_runs_left = this.runs_left--;
-				this.load_img(images.start, half_runs_left, this.img_loaded);
-				//console.log(this.results);
-				this.halfTime();
+			if (typeof impl.on_bw_rough_done !== "undefined") {//TODO
+				if(this.results.length == impl.rough){
+					alert(impl.rough);
+					//console.log("::::::::::::::::::::::::::::::::::::::::::::::::::::");
+					this.results.push({r:[]});
+					var half_runs_left = this.runs_left--;
+					this.load_img(images.start, half_runs_left, this.img_loaded);
+					//console.log(this.results);
+					this.halfTime();
+				}
 			}
-			
 			this.results.push({r:[]});
 			this.load_img(images.start, this.runs_left--, this.img_loaded);
 		}
@@ -585,6 +589,11 @@ BOOMR.plugins.BW = {
 
 		if(!impl.base_url) {
 			return this;
+		}
+		
+		//TODO
+		if(config && config.rough) {
+			impl.rough = config.rough;
 		}
 		
 		//TODO
