@@ -2,8 +2,6 @@
 // and print the results into the browser itself.
 BOOMR.subscribe('before_beacon', function(o) {
 	
-	console.dir(o);
-	
 	var html = "", t_name, t_other, others = [];
 
 	if(!o.t_other) o.t_other = "";

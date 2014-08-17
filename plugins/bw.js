@@ -446,7 +446,7 @@ impl = {
 			network_status.latency = this.calc_rough_latency();  
 			impl.on_bw_rough_done(network_status);
 			
-			console.log("==================================================================");
+			/*console.log("==================================================================");
 			console.log("1st Star: "+ BOOMR.t_start);
 			console.log("1nd naviStar: "+ performance.timing.navigationStart)
 			var now1 = new Date().getTime();
@@ -454,7 +454,7 @@ impl = {
 			var page_load_time1 = now1 - BOOMR.t_start;
 			var page_load_time11 = now1 - performance.timing.navigationStart;
 			console.log("1st loading time: " + page_load_time1 +", "+page_load_time11);
-			console.log("==================================================================");
+			console.log("==================================================================");*/
 		}
 	},
 	
@@ -472,7 +472,7 @@ impl = {
 				bw_time:	Math.round(new Date().getTime()/1000)
 			};
 
-		console.log("==================================================================");
+		/*console.log("==================================================================");
 		console.log("2nd Star: "+ BOOMR.t_start);
 		console.log("2nd naviStar: "+ performance.timing.navigationStart)
 		var now2 = new Date().getTime();
@@ -480,7 +480,7 @@ impl = {
 		var page_load_time2 = now2 - BOOMR.t_start;
 		var page_load_time22 = now2 - performance.timing.navigationStart;
 		console.log("2nd loading time: " + page_load_time2 +", "+page_load_time22);
-		console.log("==================================================================");
+		console.log("==================================================================");*/
 		
 		BOOMR.addVar(o);
 		if(bw.debug_info.length > 0) {
@@ -522,19 +522,17 @@ impl = {
 			
 		}
 		else {
+			
+			this.results.push({r:[]});
+			this.load_img(images.start, this.runs_left--, this.img_loaded);
+			
 			if (typeof impl.on_bw_rough_done !== "undefined") {//TODO
-				if(this.results.length == impl.rough){
-					//alert(impl.rough);
+				if(this.results.length === (impl.rough+1)){
 					//console.log("::::::::::::::::::::::::::::::::::::::::::::::::::::");
-					this.results.push({r:[]});
-					var half_runs_left = this.runs_left--;
-					this.load_img(images.start, half_runs_left, this.img_loaded);
 					//console.log(this.results);
 					this.halfTime();
 				}
 			}
-			this.results.push({r:[]});
-			this.load_img(images.start, this.runs_left--, this.img_loaded);
 		}
 	},
 
