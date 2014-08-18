@@ -27,9 +27,13 @@ BOOMR.subscribe('before_beacon', function(o) {
 	}
 	if(o.bw) { html += "Your bandwidth to this server is " + parseInt(o.bw*8/1024) + "kbps (&#x00b1;" + parseInt(o.bw_err*100/o.bw) + "%)<br>"; }
 	if(o.lat) { html += "Your latency to this server is " + parseInt(o.lat) + "&#x00b1;" + o.lat_err + "ms<br>"; }
+	
+	var now = new Date().getTime();
+	var page_load_time = now - performance.timing.navigationStart;
+	html += "Your loading time is "+page_load_time+"ms<br/>";
 
 	var r = document.getElementById('results');
-	r.innerHTML = html;
+	r.innerHTML += html;
 
 	if(others.length) {
 		r.innerHTML += "Other parameters:<br>";
