@@ -48,16 +48,16 @@ else if (document.attachEvent) {
 
 BOOMR.init({ 
 	user_ip: '10.0.0.1', 
-	BW: { base_url: '../images/'},
+	BW: { base_url: '../images/', cookie: 'rough'},
 	rough: 1, //@rough: 控制rough程度, 1:非常rough, 2:普通rough, 3:一點點rough, 不填寫預設為2
 	on_bw_rough_done: function(network_status){
 		//alert("Rough bw: "+network_status.bandwidth+" kbps,  Rough lat: "+network_status.latency+" ms");
 		var nowR = new Date().getTime();
 		var page_load_timeR = nowR - performance.timing.navigationStart;
 
-		var results = "Rough bandwidth is " + network_status.bandwidth + "kbps<br/>"
+		var results = "Rough bandwidth is " + parseInt(network_status.bandwidth*8/1024) + "kbps<br/>"
 					+"Rough latency is "+network_status.latency+"ms<br/>"
-					+"Rough loading Time is "+page_load_timeR+"ms<br/><br/>";
+					+"Rough spending Time is "+page_load_timeR+"ms<br/><br/>";
 					
 		document.getElementById('results').innerHTML = results;
 	} 

@@ -30,7 +30,7 @@ BOOMR.subscribe('before_beacon', function(o) {
 	
 	var now = new Date().getTime();
 	var page_load_time = now - performance.timing.navigationStart;
-	html += "Your loading time is "+page_load_time+"ms<br/>";
+	html += "Your spending time is "+page_load_time+"ms<br/>";
 
 	var r = document.getElementById('results');
 	r.innerHTML += html;
@@ -48,4 +48,3 @@ BOOMR.subscribe('before_beacon', function(o) {
 	}
 
 });
-

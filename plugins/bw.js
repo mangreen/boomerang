@@ -118,6 +118,9 @@ impl = {
 	{
 		var	i, j, n=0, r, bandwidths_corrected=[], median_corrected;
 		
+		//console.log("RRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRR");
+		//console.dir(this.results);
+		
 		for(i=0; i<this.nruns; i++) {
 			
 			if(!this.results[i] || !this.results[i].r) {
@@ -213,6 +216,8 @@ impl = {
 			amean_corrected, std_dev_corrected, std_err_corrected, median_corrected,
 			nimgs, bw, bw_c, debug_info=[];
 		
+		//console.log("YYYYYYYYYYYYYYYYYYYYYYYYYYYY");
+		//console.dir(this.results);
 		for(i=0; i<this.nruns; i++) {
 			if(!this.results[i] || !this.results[i].r) {
 				continue;
@@ -442,7 +447,7 @@ impl = {
 		if (typeof impl.on_bw_rough_done !== "undefined") {//TODO
 
 			var network_status = {};
-			network_status.bandwidth = parseInt(this.calc_rough_bw()*8/1024);
+			network_status.bandwidth = parseInt(this.calc_rough_bw());
 			network_status.latency = this.calc_rough_latency();  
 			impl.on_bw_rough_done(network_status);
 			
